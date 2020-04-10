@@ -13,13 +13,12 @@ const router = express.Router();
 router.get("/", (req, res) => {
     console.log(req.query)
 
-    const options = {
-        sortBy: req.query.sortBy,
-        limit: req.query.limit,
+    // const options = {
+    //     sortBy: req.query.sortBy,
+    //     limit: req.query.limit,
+    // }
 
-    }
-
-	users.find(options)
+	users.find(/*options*/ req.query)
 		.then((users) => {
 			res.status(200).json(users)
 		})
@@ -186,30 +185,28 @@ router.get("/:id/posts/:postId", (req, res) => {
 
 router.post("/:id/posts", (req, res) => {
 
-    
-
     if (!req.body.text) {
-        return res.status(400).json({
-            message: "Text is required to create a post.",
-        })
+        return res
+            .status(400)
+            .json({
+                message: "Text is required to create a post."
+            })
     }
 
     users.addUserPost(req.params.id, req.body)
 
-    .then(newPost => {
+    .then(post => {
         return res.status(201).json(post)
     })
 
-    .catch(errors => {
-        console.log(errors)
+    .catch(error => {
+        console.log(error)
         res
             .status(500)
-                .json({
-                    errorMessage: "There was an error while saving the post to the database."
-                })
+            .json({
+                errorMessage: "There was an error while saving the post to the database."
+            })
     })
-
-    res.status(201).json(newPost);
 
 });
 
